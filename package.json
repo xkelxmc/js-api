@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node -r @babel/register index.js",
-    "watch": "nodemon --exec node -r @babel/register index.js"
+    "start": "node -r dotenv/config -r @babel/register index.js",
+    "watch": "nodemon --exec node -r dotenv/config -r @babel/register index.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +19,11 @@
     "@babel/core": "^7.11.1",
     "@babel/node": "^7.10.5",
     "@babel/preset-env": "^7.11.0",
-    "nodemon": "^2.0.4"
+    "eslint": "^7.7.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5"
   }
 }
