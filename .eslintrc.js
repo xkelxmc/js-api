@@ -16,6 +16,7 @@ module.exports = {
             { singleQuote: true, parser: 'flow', tabWidth: 4 },
         ],
         'no-unused-vars': 'off',
+        'require-jsdoc': 'off',
         'no-invalid-this': 'off',
     },
 };
