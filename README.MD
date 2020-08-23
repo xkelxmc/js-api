@@ -1,4 +1,4 @@
-#JS API
+# JS API
 
 ### Install:
 
