@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
+import jwt from 'jsonwebtoken';
 
 const { Schema } = mongoose;
 
@@ -52,5 +53,33 @@ userSchema.pre('save', async function (next) {
         next(error);
     }
 });
+
+userSchema.methods.generateAuthToken = async function () {
+    try {
+        const user = this;
+        const token = jwt.sign({ _id: user.id }, process.env.JWT_KEY);
+        user.tokens = user.tokens.concat({ token });
+        await user.save();
+        return token;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+userSchema.statics.findByCredentials = async (email, password) => {
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            throw new Error('invalid email or password');
+        }
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatch) {
+            throw new Error('invalid email or password');
+        }
+        return user;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 
 export const User = mongoose.model('User', userSchema);
