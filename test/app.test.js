@@ -12,7 +12,7 @@ describe('Api main tests', () => {
                 done();
             });
     });
-    it('sould throw 404 error if route undefined', (done) => {
+    it('should throw 404 error if route undefined', (done) => {
         request(app)
             .get('/dsmfkbsdfsdjfbjsdbfjksdfjsdn')
             .end((err, res) => {

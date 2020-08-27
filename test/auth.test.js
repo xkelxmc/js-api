@@ -52,14 +52,14 @@ describe('AUTH: Check auth query', () => {
         done();
     });
 
-    it('SingUp should return 200', (done) => {
+    it('should singUp query return 200', (done) => {
         createUser(dummyUser).end((err, res) => {
             expect(res.status).to.equal(200);
             done();
         });
     });
 
-    it('Login should return 200', (done) => {
+    it('should login query return 200', (done) => {
         createUser(dummyUser).end((err1, res1) => {
             expect(res1.status).to.equal(200);
             loginUser(dummyUser).end((err2, res2) => {
@@ -71,7 +71,7 @@ describe('AUTH: Check auth query', () => {
         });
     });
 
-    it('Should not send error logged out', (done) => {
+    it('should not send error logged out', (done) => {
         createUser(dummyUser).end((err1, res1) => {
             expect(res1.status).to.equal(200);
             loginUser(dummyUser).end((err2, res2) => {
@@ -85,6 +85,37 @@ describe('AUTH: Check auth query', () => {
                         done();
                     });
             });
+        });
+    });
+
+    it('should not send error logged out ALL', (done) => {
+        createUser(dummyUser).end((err1, res1) => {
+            expect(res1.status).to.equal(200);
+            loginUser(dummyUser).end((err2, res2) => {
+                expect(res2.status).to.equal(200);
+                const { token } = res2.body;
+                userAgent
+                    .get('/auth/logoutall')
+                    .set('Authorization', 'Bearer ' + token)
+                    .end((err3, res3) => {
+                        expect(res3.status).to.equal(200);
+                        done();
+                    });
+            });
+        });
+    });
+
+    it('should send 401 status if already logged out (logout)', (done) => {
+        userAgent.get('/auth/logout').end((err, res) => {
+            expect(res.status).to.equal(401);
+            done();
+        });
+    });
+
+    it('should send 401 status if already logged out (logoutAll)', (done) => {
+        userAgent.get('/auth/logoutall').end((err, res) => {
+            expect(res.status).to.equal(401);
+            done();
         });
     });
 });

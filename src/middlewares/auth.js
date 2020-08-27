@@ -1,6 +1,6 @@
 import { asyncHandler } from './asyncHandler';
 import Boom from '@hapi/boom';
-import { User } from '../models/User';
+import User from '../models/User';
 import jwt from 'jsonwebtoken';
 
 const auth = asyncHandler(async (req, res, next) => {

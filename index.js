@@ -5,6 +5,7 @@ import errorHandler from './src/middlewares/errorHandler';
 import usersRouter from './src/routes/users';
 import authRouter from './src/routes/auth';
 import { postsRouter } from './src/routes/posts';
+import authMiddleware from './src/middlewares/auth';
 
 const app = express();
 
@@ -12,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/auth', authRouter);
-app.use('/users', usersRouter);
+app.use('/users', authMiddleware, usersRouter);
 app.use('/posts', postsRouter);
 
 app.get('/ping', (req, res) => {
