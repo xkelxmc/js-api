@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/auth', authRouter);
 app.use('/users', authMiddleware, usersRouter);
-app.use('/posts', postsRouter);
+app.use('/posts', authMiddleware, postsRouter);
 
 app.get('/ping', (req, res) => {
     return res.status(200).json('pong');
