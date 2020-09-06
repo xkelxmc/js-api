@@ -1,9 +1,20 @@
 import { expect } from 'chai';
 import request from 'supertest';
+import mongoose from 'mongoose';
 
 import app from '../index';
 
 describe('Api main tests', () => {
+    before((done) => {
+        mongoose.connect(process.env.MONGO_TEST_URI, {
+            useUnifiedTopology: true,
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useFindAndModify: true,
+        });
+        mongoose.connection.once('open', () => done());
+    });
+
     it('should return 200', (done) => {
         request(app)
             .get('/ping')

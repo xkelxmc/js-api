@@ -18,16 +18,6 @@ const createUser = (user) => userAgent.post('/auth/signup').send(user);
 const loginUser = (user) => userAgent.post('/auth/login').send(user);
 
 describe('AUTH: Check auth query', () => {
-    before((done) => {
-        mongoose.connect(process.env.MONGO_TEST_URI, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: true,
-        });
-        mongoose.connection.once('open', () => done());
-    });
-
     beforeEach((done) => {
         mongoose.connection.collections.users.drop(() => done());
     });
