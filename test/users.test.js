@@ -25,6 +25,10 @@ describe('USERS: Check auth query', () => {
     });
 
     beforeEach((done) => {
+        mongoose.connection.collections.posts.drop(() => done());
+    });
+
+    beforeEach((done) => {
         mongoose.connection.collections.users.createIndex(
             { email: 1 },
             { unique: true }
@@ -34,6 +38,10 @@ describe('USERS: Check auth query', () => {
 
     afterEach((done) => {
         mongoose.connection.collections.users.drop(() => done());
+    });
+
+    afterEach((done) => {
+        mongoose.connection.collections.posts.drop(() => done());
     });
 
     afterEach((done) => {
