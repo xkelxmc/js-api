@@ -1,5 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import compression from 'compression';
+import helmet from 'helmet';
 import notFound from './src/middlewares/notFound';
 import errorHandler from './src/middlewares/errorHandler';
 import usersRouter from './src/routes/users';
@@ -9,6 +11,8 @@ import authMiddleware from './src/middlewares/auth';
 
 const app = express();
 
+app.use(compression());
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
