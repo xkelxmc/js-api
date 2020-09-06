@@ -59,6 +59,10 @@ describe('AUTH: Check auth query', () => {
         });
     });
 
+    it('should singUp query return auth token', (done) => {
+        done();
+    });
+
     it('should login query return 200', (done) => {
         createUser(dummyUser).end((err1, res1) => {
             expect(res1.status).to.equal(200);
@@ -69,6 +73,10 @@ describe('AUTH: Check auth query', () => {
                 done();
             });
         });
+    });
+
+    it('should login query return auth token', (done) => {
+        done();
     });
 
     it('should not send error logged out', (done) => {
@@ -117,5 +125,39 @@ describe('AUTH: Check auth query', () => {
             expect(res.status).to.equal(401);
             done();
         });
+    });
+
+    it('should not create user if missing name', (done) => {
+        done();
+    });
+    it('should not create user if missing lastName', (done) => {
+        done();
+    });
+    it('should not create user if missing email', (done) => {
+        done();
+    });
+    it('should not create user if missing password', (done) => {
+        done();
+    });
+    it('should not signUp with not unique email', (done) => {
+        done();
+    });
+
+    it('should not login if missing email', (done) => {
+        done();
+    });
+    it('should not login if missing password', (done) => {
+        done();
+    });
+    it('should not login if wrong password', (done) => {
+        done();
+    });
+
+    it('should not access to protected resources after logout', (done) => {
+        done();
+    });
+
+    it('should not access to protected resources after logout All', (done) => {
+        done();
     });
 });
