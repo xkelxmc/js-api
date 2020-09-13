@@ -45,6 +45,8 @@ const userSchema = new Schema({
             ref: 'Post',
         },
     ],
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    dislikes: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
 });
 
 userSchema.pre('save', async function (next) {

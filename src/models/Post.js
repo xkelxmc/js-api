@@ -7,6 +7,10 @@ const postSchema = new Schema({
     body: { type: String, required: true },
     data: { type: Date, default: Date.now },
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    userLikes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    userDislikes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    likes: { type: Number, default: 0 },
+    dislikes: { type: Number, default: 0 },
 });
 
 export default mongoose.model('Post', postSchema);

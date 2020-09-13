@@ -56,11 +56,61 @@ const createOne = asyncHandler(async (req, res, next) => {
 });
 
 const like = asyncHandler(async (req, res, next) => {
-    return res.json({});
+    const userId = req.user._id;
+    const { postId } = req.params;
+    try {
+        const post = await Post.findById(postId);
+        if (!post) {
+            return next(Boom.notFound('Post not found'));
+        }
+        const isLiked = post
+            .toObject()
+            .userLikes.find((id) => id.toString() === userId.toString());
+
+        if (isLiked) {
+            return next(Boom.badRequest('User already like this post'));
+        }
+
+        const user = await User.findById(userId);
+
+        post.userLikes.push(userId);
+        post.likes++;
+        user.likes.push(postId);
+        await post.save();
+        await user.save();
+        return res.status(200).json(post);
+    } catch (e) {
+        return next(Boom.badRequest('error'));
+    }
 });
 
 const dislike = asyncHandler(async (req, res, next) => {
-    return res.json({});
+    const userId = req.user._id;
+    const { postId } = req.params;
+    try {
+        const post = await Post.findById(postId);
+        if (!post) {
+            return next(Boom.notFound('Post not found'));
+        }
+        const isLiked = post
+            .toObject()
+            .userDislikes.find((id) => id.toString() === userId.toString());
+
+        if (isLiked) {
+            return next(Boom.badRequest('User already dislike this post'));
+        }
+
+        const user = await User.findById(userId);
+
+        post.userDislikes.push(userId);
+        post.dislikes++;
+        user.dislikes.push(postId);
+        await post.save();
+        await user.save();
+        return res.status(200).json(post);
+    } catch (e) {
+        return next(Boom.badRequest('error'));
+    }
 });
 
 export default {
