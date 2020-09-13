@@ -10,7 +10,7 @@ describe('Api main tests', () => {
             useUnifiedTopology: true,
             useNewUrlParser: true,
             useCreateIndex: true,
-            useFindAndModify: true,
+            useFindAndModify: false,
         });
         mongoose.connection.once('open', () => done());
     });

@@ -59,8 +59,13 @@ const like = asyncHandler(async (req, res, next) => {
     const userId = req.user._id;
     const { postId } = req.params;
     try {
-        const post = await Post.findById(postId);
-        if (!post) {
+        let post;
+        try {
+            post = await Post.findById(postId);
+            if (!post) {
+                throw new Error('');
+            }
+        } catch (notFound) {
             return next(Boom.notFound('Post not found'));
         }
         const isLiked = post
@@ -88,8 +93,13 @@ const dislike = asyncHandler(async (req, res, next) => {
     const userId = req.user._id;
     const { postId } = req.params;
     try {
-        const post = await Post.findById(postId);
-        if (!post) {
+        let post;
+        try {
+            post = await Post.findById(postId);
+            if (!post) {
+                throw new Error('');
+            }
+        } catch (notFound) {
             return next(Boom.notFound('Post not found'));
         }
         const isLiked = post
@@ -109,6 +119,7 @@ const dislike = asyncHandler(async (req, res, next) => {
         await user.save();
         return res.status(200).json(post);
     } catch (e) {
+        console.log(e);
         return next(Boom.badRequest('error'));
     }
 });

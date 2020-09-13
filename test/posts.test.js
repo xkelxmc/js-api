@@ -19,6 +19,7 @@ const dummyPost = {
 const userAgent = request(app);
 
 const badToken = 'badToken';
+const badID = 'badID';
 
 const createUser = (user) => userAgent.post('/auth/signup').send(user);
 
@@ -183,18 +184,151 @@ describe('POSTS: Check auth query', () => {
         });
     });
     it('should up vote created post by id', (done) => {
-        done();
+        createUser(dummyUser).end((err1, res1) => {
+            expect(res1.status).to.equal(200);
+            loginUser(dummyUser).end((err2, res2) => {
+                expect(res2.status).to.equal(200);
+                const { token } = res2.body;
+                createPost(dummyPost, token).end((err3, res3) => {
+                    expect(res3.status).to.equal(201);
+                    const { _id, likes } = res3.body;
+                    userAgent
+                        .post(`/posts/${_id}/like`)
+                        .set('Authorization', 'Bearer ' + token)
+                        .end((err4, res4) => {
+                            expect(res4.status).to.equal(200);
+                            const { _id: _id2, likes: likes2 } = res4.body;
+                            expect(_id2).to.equal(_id);
+                            expect(likes2).to.equal(likes + 1);
+                            done();
+                        });
+                });
+            });
+        });
     });
     it('should down vote created post by id', (done) => {
-        done();
+        createUser(dummyUser).end((err1, res1) => {
+            expect(res1.status).to.equal(200);
+            loginUser(dummyUser).end((err2, res2) => {
+                expect(res2.status).to.equal(200);
+                const { token } = res2.body;
+                createPost(dummyPost, token).end((err3, res3) => {
+                    expect(res3.status).to.equal(201);
+                    const { _id, dislikes } = res3.body;
+                    userAgent
+                        .post(`/posts/${_id}/dislike`)
+                        .set('Authorization', 'Bearer ' + token)
+                        .end((err4, res4) => {
+                            expect(res4.status).to.equal(200);
+                            const {
+                                _id: _id2,
+                                dislikes: dislikes2,
+                            } = res4.body;
+                            expect(_id2).to.equal(_id);
+                            expect(dislikes2).to.equal(dislikes + 1);
+                            done();
+                        });
+                });
+            });
+        });
     });
     it('should not up vote twice created post by id', (done) => {
-        done();
+        createUser(dummyUser).end((err1, res1) => {
+            expect(res1.status).to.equal(200);
+            loginUser(dummyUser).end((err2, res2) => {
+                expect(res2.status).to.equal(200);
+                const { token } = res2.body;
+                createPost(dummyPost, token).end((err3, res3) => {
+                    expect(res3.status).to.equal(201);
+                    const { _id, likes } = res3.body;
+                    userAgent
+                        .post(`/posts/${_id}/like`)
+                        .set('Authorization', 'Bearer ' + token)
+                        .end((err4, res4) => {
+                            expect(res4.status).to.equal(200);
+                            const { _id: _id2, likes: likes2 } = res4.body;
+                            expect(_id2).to.equal(_id);
+                            expect(likes2).to.equal(likes + 1);
+                            userAgent
+                                .post(`/posts/${_id}/like`)
+                                .set('Authorization', 'Bearer ' + token)
+                                .end((err5, res5) => {
+                                    expect(res5.status).to.equal(400);
+                                    done();
+                                });
+                        });
+                });
+            });
+        });
     });
     it('should not down vote twice created post by id', (done) => {
-        done();
+        createUser(dummyUser).end((err1, res1) => {
+            expect(res1.status).to.equal(200);
+            loginUser(dummyUser).end((err2, res2) => {
+                expect(res2.status).to.equal(200);
+                const { token } = res2.body;
+                createPost(dummyPost, token).end((err3, res3) => {
+                    expect(res3.status).to.equal(201);
+                    const { _id, dislikes } = res3.body;
+                    userAgent
+                        .post(`/posts/${_id}/dislike`)
+                        .set('Authorization', 'Bearer ' + token)
+                        .end((err4, res4) => {
+                            expect(res4.status).to.equal(200);
+                            const {
+                                _id: _id2,
+                                dislikes: dislikes2,
+                            } = res4.body;
+                            expect(_id2).to.equal(_id);
+                            expect(dislikes2).to.equal(dislikes + 1);
+                            userAgent
+                                .post(`/posts/${_id}/dislike`)
+                                .set('Authorization', 'Bearer ' + token)
+                                .end((err5, res5) => {
+                                    expect(res5.status).to.equal(400);
+                                    done();
+                                });
+                        });
+                });
+            });
+        });
     });
-    it('should not find non-existent post', (done) => {
-        done();
+    it('should not find non-existent post if liked', (done) => {
+        createUser(dummyUser).end((err1, res1) => {
+            expect(res1.status).to.equal(200);
+            loginUser(dummyUser).end((err2, res2) => {
+                expect(res2.status).to.equal(200);
+                const { token } = res2.body;
+                createPost(dummyPost, token).end((err3, res3) => {
+                    expect(res3.status).to.equal(201);
+                    userAgent
+                        .post(`/posts/${badID}/like`)
+                        .set('Authorization', 'Bearer ' + token)
+                        .end((err4, res4) => {
+                            expect(res4.status).to.equal(404);
+                            done();
+                        });
+                });
+            });
+        });
+    });
+    it('should not find non-existent post if disliked', (done) => {
+        createUser(dummyUser).end((err1, res1) => {
+            expect(res1.status).to.equal(200);
+            loginUser(dummyUser).end((err2, res2) => {
+                expect(res2.status).to.equal(200);
+                const { token } = res2.body;
+                createPost(dummyPost, token).end((err3, res3) => {
+                    expect(res3.status).to.equal(201);
+                    userAgent
+                        .post(`/posts/${badID}/dislike`)
+                        .set('Authorization', 'Bearer ' + token)
+                        .end((err4, res4) => {
+                            expect(res4.status).to.equal(404);
+                            done();
+                        });
+                });
+            });
+        });
     });
 });
