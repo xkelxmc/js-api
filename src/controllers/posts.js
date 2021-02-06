@@ -2,11 +2,15 @@ import { asyncHandler } from '../middlewares/asyncHandler';
 import Post from '../models/Post';
 import Boom from '@hapi/boom';
 import User from '../models/User';
+import { secureUserParams } from '../helpers';
 
 const findAll = asyncHandler(async (req, res, next) => {
     try {
-        const posts = await Post.find();
-        return res.status(200).json(posts);
+        const posts = await Post.find().populate({
+            path: 'author',
+            select: 'name lastName email',
+        });
+        return res.status(200).json(posts.map(secureUserParams));
     } catch (error) {
         return next(Boom.notFound('Posts not found'));
     }
@@ -18,7 +22,10 @@ const findOne = asyncHandler(async (req, res, next) => {
         const post = await Post.findOne({
             _id: postId,
         });
-        return res.status(200).json(post);
+        const user = await User.findById(post.author);
+        return res
+            .status(200)
+            .json({ ...post.toObject(), author: secureUserParams(user) });
     } catch (error) {
         return next(Boom.notFound('Post not found'));
     }
@@ -27,8 +34,11 @@ const findOne = asyncHandler(async (req, res, next) => {
 const findByUser = asyncHandler(async (req, res, next) => {
     const { userId } = req.params;
     try {
-        const posts = await Post.find({ author: userId });
-        return res.status(200).json(posts);
+        const posts = await Post.find({ author: userId }).populate({
+            path: 'author',
+            select: 'name lastName email',
+        });
+        return res.status(200).json(posts.map(secureUserParams));
     } catch (error) {
         return next(Boom.notFound('Posts not found'));
     }
@@ -49,6 +59,8 @@ const createOne = asyncHandler(async (req, res, next) => {
         });
         await newPost.save();
         await User.findByIdAndUpdate(userId, { $push: { posts: newPost } });
+        const user = await User.findById(userId);
+        newPost.author = secureUserParams(user);
         return res.status(201).json(newPost);
     } catch (error) {
         return next(Boom.badRequest('cant create post'));
